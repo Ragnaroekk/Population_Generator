@@ -1,6 +1,7 @@
 # Author: Ray Franklin
 # Population Generator CS361
 # Built with research from https://realpython.com/python-gui-tkinter/
+# and https://realpython.com/python-csv/
 
 
 from os import read
@@ -8,6 +9,9 @@ import tkinter as tk
 import csv
 from tkinter.constants import FALSE, TRUE
 from typing import Text
+import pandas
+import sys
+
 
 YEARS = []
 for date in range(1790, 2020, 10):
@@ -45,13 +49,25 @@ def get_year():
     return input
 
 def display_results():
-    state = str(get_state())
+    state = ""
+    year = ""
+
+    if len(sys.argv) == 2:
+        year, state = read_input()
+    else:
+        state = str(get_state())
     print(state)
+    print(year)
     if not validate_state(state.upper()):
         print("State failue")
         return
     else:
         print("State accepted")
+
+# with research from https://realpython.com/python-csv/
+def read_input():
+    data_file = pandas.read_csv(sys.argv[1])
+    return data_file["input_year"][0], data_file["input_state"][0]
 
 # main window
 window = tk.Tk()
@@ -82,3 +98,5 @@ text_box_state.pack()
 text_box_year.pack()
 
 window.mainloop()
+
+
