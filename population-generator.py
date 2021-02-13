@@ -74,13 +74,8 @@ button = tk.Button(
 # add the button to the grid
 button.pack()
 
-frame_a = tk.Frame()
-
-label_a = tk.Label(master=frame_a, text="I'm in Frame A")
-
-label_a.pack()
-
-frame_a.pack()
+label_state = tk.Label(text="State:")
+label_state.pack()
 
 # add state text box to the window
 text_box_state.pack()
