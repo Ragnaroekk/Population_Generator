@@ -28,7 +28,6 @@ def validate_year(year_input):
 
 def validate_state(state_input):
     '''Checks the input state abbreviation to the list of 50 states'''
-    print(state_input)
     for state in STATES:
         if state_input == state:
             return TRUE
@@ -38,12 +37,17 @@ def validate_state(state_input):
 def get_state():
     '''Returns the state text entered by the user'''
     input = text_box_state.get("1.0", "end-1c")
-    print(input)
+    return input
+
+def get_year():
+    '''Returns the year number entered by the user'''
+    input = text_box_year.get("1.0", "end-1c")
+    return input
 
 def display_results():
-    state = get_state()
-    print
-    if not validate_state(state):
+    state = str(get_state())
+    print(state)
+    if not validate_state(state.upper()):
         print("State failue")
         return
     else:
@@ -53,9 +57,11 @@ def display_results():
 window = tk.Tk()
 window.title("Population Generator")
 
-# user entry for the state
+# user entry for the state and year
 text_box_state = tk.Text(height=2, width=10)
+text_box_year = tk.Text(height=2, width=10)
 
+# submit button
 button = tk.Button(
     text="Display Results!",
     command=lambda: display_results(),
@@ -78,5 +84,6 @@ frame_a.pack()
 
 # add state text box to the window
 text_box_state.pack()
+text_box_year.pack()
 
 window.mainloop()
