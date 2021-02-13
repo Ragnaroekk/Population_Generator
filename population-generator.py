@@ -6,7 +6,7 @@
 from os import read
 import tkinter as tk
 import csv
-from tkinter.constants import TRUE
+from tkinter.constants import FALSE, TRUE
 from typing import Text
 
 YEARS = []
@@ -19,22 +19,20 @@ with open("/home/ragnaroekk/Documents/Courses/CS361/Population_Generator/csvData
     for line in csv.reader(file):
         STATES.append(line[2])
 
-
-print(STATES)
-
 def validate_year(year_input):
     '''Checks the input year to the list of census years'''
     for year in YEARS:
         if year_input == year:
             return TRUE
-    return False
+    return FALSE
 
 def validate_state(state_input):
     '''Checks the input state abbreviation to the list of 50 states'''
+    print(state_input)
     for state in STATES:
         if state_input == state:
             return TRUE
-    return False
+    return FALSE
 
 # with research from https://stackoverflow.com/questions/14824163/how-to-get-the-input-from-the-tkinter-text-widget
 def get_state():
@@ -44,6 +42,7 @@ def get_state():
 
 def display_results():
     state = get_state()
+    print
     if not validate_state(state):
         print("State failue")
         return
