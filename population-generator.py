@@ -1,7 +1,7 @@
 # Author: Ray Franklin
 # Population Generator CS361
 # Built with research from https://realpython.com/python-gui-tkinter/
-# and https://realpython.com/python-csv/
+# https://realpython.com/python-csv/, https://www.census.gov/data/developers/data-sets/decennial-census.html
 
 
 from os import read
@@ -12,10 +12,11 @@ from tkinter.constants import FALSE, TRUE
 from typing import Text
 import pandas
 import sys
+import requests
 
 
 YEARS = []
-for date in range(1790, 2020, 10):
+for date in range(2010, 2020):
     YEARS.append(date)
 
 STATES = []
@@ -50,6 +51,11 @@ def get_year():
     input = text_box_year.get("1.0", "end-1c")
     return input
 
+# with research from https://realpython.com/python-csv/
+def read_input():
+    data_file = pandas.read_csv(sys.argv[1])
+    return data_file["input_year"][0], data_file["input_state"][0]
+
 def display_results():
     state = ""
     year = ""
@@ -68,11 +74,10 @@ def display_results():
     if not validate_year(year):
         print("Year failue")
         return
+    # research from https://www.dataquest.io/blog/python-api-tutorial/
+    response = requests.get("api.census.gov/data/2010/dec/sf1?")
+    print(response)
 
-# with research from https://realpython.com/python-csv/
-def read_input():
-    data_file = pandas.read_csv(sys.argv[1])
-    return data_file["input_year"][0], data_file["input_state"][0]
 
 # main window
 window = tk.Tk()
