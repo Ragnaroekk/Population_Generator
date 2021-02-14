@@ -5,6 +5,7 @@
 
 
 from os import read
+from tkinter import ttk
 import tkinter as tk
 import csv
 from tkinter.constants import FALSE, TRUE
@@ -25,9 +26,10 @@ with open("/home/ragnaroekk/Documents/Courses/CS361/Population_Generator/csvData
 
 def validate_year(year_input):
     '''Checks the input year to the list of census years'''
-    for year in YEARS:
-        if year_input == year:
-            return TRUE
+    if year_input:
+        for year in YEARS:
+            if int(year_input) == year:
+                return TRUE
     return FALSE
 
 def validate_state(state_input):
@@ -52,17 +54,20 @@ def display_results():
     state = ""
     year = ""
 
+    # check if we got an input file and use those values
     if len(sys.argv) == 2:
         year, state = read_input()
     else:
+        # no input file, use text fields
         state = str(get_state())
-    print(state)
-    print(year)
+        year = str(get_year())
+    # check for valid inputs
     if not validate_state(state.upper()):
         print("State failue")
         return
-    else:
-        print("State accepted")
+    if not validate_year(year):
+        print("Year failue")
+        return
 
 # with research from https://realpython.com/python-csv/
 def read_input():
@@ -71,6 +76,7 @@ def read_input():
 
 # main window
 window = tk.Tk()
+window.resizable(width= 1, height= 1)
 window.title("Population Generator")
 
 # user entry for the state and year
@@ -87,16 +93,34 @@ button = tk.Button(
     fg="white",
 )
 
-# add the button to the grid
-button.pack()
-
 label_state = tk.Label(text="State:")
-label_state.pack()
+label_year = tk.Label(text="Year:")
 
-# add state text box to the window
+# wiht research from https://www.askpython.com/python-modules/tkinter
+# and https://www.geeksforgeeks.org/python-tkinter-treeview-scrollbar/
+tree = ttk.Treeview(window, selectmode="browse")
+tree["columns"] = ("1", "2", "3")
+tree["show"] = "headings"
+tree.heading("1", text="input_year")
+tree.heading("2", text="input_state")
+tree.heading("3", text="output_population_size")
+tree.column("1", stretch=tk.YES)
+tree.column("2", stretch=tk.YES)
+tree.column("3", stretch=tk.YES)
+
+# add text boxes to the window
+label_state.pack()
 text_box_state.pack()
+label_year.pack()
 text_box_year.pack()
 
+# add the button to the window
+button.pack()
+
+# add the tree to the window
+tree.pack()
+
+# mainloop as required for tkinter
 window.mainloop()
 
 
