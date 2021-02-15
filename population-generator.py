@@ -2,9 +2,10 @@
 # Population Generator CS361
 # Built with research from https://realpython.com/python-gui-tkinter/
 # https://realpython.com/python-csv/, https://www.census.gov/data/developers/data-sets/decennial-census.html
+# https://www.census.gov/data/datasets/time-series/demo/popest/2010s-state-total.html
 
 
-from os import read
+from os import read, stat
 from tkinter import ttk
 import tkinter as tk
 import csv
@@ -12,7 +13,6 @@ from tkinter.constants import FALSE, TRUE
 from typing import Text
 import pandas
 import sys
-import requests
 
 
 YEARS = []
@@ -21,9 +21,8 @@ for date in range(2010, 2020):
 
 STATES = []
 # data from https://worldpopulationreview.com/states/state-abbreviations
-with open("/home/ragnaroekk/Documents/Courses/CS361/Population_Generator/csvData.csv", newline='') as file:
-    for line in csv.reader(file):
-        STATES.append(line[2])
+data_file = pandas.read_csv("/home/ragnaroekk/Documents/Courses/CS361/Population_Generator/nst-est2019-01.csv")    
+STATES = data_file.iloc[:,0]
 
 def validate_year(year_input):
     '''Checks the input year to the list of census years'''
@@ -36,7 +35,7 @@ def validate_year(year_input):
 def validate_state(state_input):
     '''Checks the input state abbreviation to the list of 50 states'''
     for state in STATES:
-        if state_input == state:
+        if state_input.upper() == state.upper():
             return TRUE
     return FALSE
 
@@ -63,21 +62,26 @@ def display_results():
     # check if we got an input file and use those values
     if len(sys.argv) == 2:
         year, state = read_input()
+        print(year, state)
     else:
         # no input file, use text fields
         state = str(get_state())
         year = str(get_year())
     # check for valid inputs
-    if not validate_state(state.upper()):
+    if not validate_state(state):
         print("State failue")
         return
     if not validate_year(year):
         print("Year failue")
         return
-    # research from https://www.dataquest.io/blog/python-api-tutorial/
-    response = requests.get("api.census.gov/data/2010/dec/sf1?")
-    print(response)
 
+    # reference https://kanoki.org/2019/04/12/pandas-how-to-get-a-cell-value-and-update-it/
+    data_file = pandas.read_csv("/home/ragnaroekk/Documents/Courses/CS361/Population_Generator/nst-est2019-01.csv",index_col=0)
+    
+    
+    tree.insert("", "end", text="1", values=(year, state, data_file.loc[str(state)][str(year)]))
+
+    return
 
 # main window
 window = tk.Tk()
