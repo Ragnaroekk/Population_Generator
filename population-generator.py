@@ -6,9 +6,8 @@
 
 
 from os import read, stat
-from tkinter import ttk
+from tkinter import mainloop, ttk
 import tkinter as tk
-import csv
 from tkinter.constants import FALSE, TRUE
 from typing import Text
 import pandas
@@ -23,6 +22,7 @@ STATES = []
 # data from https://worldpopulationreview.com/states/state-abbreviations
 data_file = pandas.read_csv("/home/ragnaroekk/Documents/Courses/CS361/Population_Generator/nst-est2019-01.csv")    
 STATES = data_file.iloc[:,0]
+
 
 def validate_year(year_input):
     '''Checks the input year to the list of census years'''
@@ -55,18 +55,17 @@ def read_input():
     data_file = pandas.read_csv(sys.argv[1])
     return data_file["input_year"][0], data_file["input_state"][0]
 
-def display_results():
-    state = ""
-    year = ""
+def display_results(input_received):
+    '''Searches the data for the give state and year, then displayes the reult to screen and 
+    send it to an output file'''
 
-    # check if we got an input file and use those values
-    if len(sys.argv) == 2:
+    # check for an input file
+    if input_received:
         year, state = read_input()
-        print(year, state)
     else:
-        # no input file, use text fields
         state = str(get_state())
         year = str(get_year())
+
     # check for valid inputs
     if not validate_state(state):
         print("State failue")
@@ -74,14 +73,26 @@ def display_results():
     if not validate_year(year):
         print("Year failue")
         return
+    
+    # account for capitalization errors and make sure we have strings
+    state = state.capitalize()
+    year = str(year)
 
     # reference https://kanoki.org/2019/04/12/pandas-how-to-get-a-cell-value-and-update-it/
     data_file = pandas.read_csv("/home/ragnaroekk/Documents/Courses/CS361/Population_Generator/nst-est2019-01.csv",index_col=0)
-    
-    
-    tree.insert("", "end", text="1", values=(year, state, data_file.loc[str(state)][str(year)]))
+    if not input_received:
+        tree.insert("", "end", text="1", values=(year, state, data_file.loc[state][year]))
+
+    df_output = pandas.DataFrame({"year": [year],"state": [state], 
+                                "output_population_size": [data_file.loc[state][year]]})
+    df_output.to_csv("output.csv",index=False)
 
     return
+
+# check if we got an input file and use those values
+if __name__ == "__main__":
+    if len(sys.argv) == 2:
+        display_results(True)
 
 # main window
 window = tk.Tk()
@@ -95,7 +106,7 @@ text_box_year = tk.Text(height=2, width=10)
 # submit button
 button = tk.Button(
     text="Display Results!",
-    command=lambda: display_results(),
+    command=lambda: display_results(False),
     width=10,
     height=5,
     bg="green",
@@ -131,5 +142,7 @@ tree.pack()
 
 # mainloop as required for tkinter
 window.mainloop()
+
+
 
 
