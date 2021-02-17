@@ -1,19 +1,18 @@
 # Author: Ray Franklin
 # Population Generator CS361
+# Built and tested with Python 3.8.5
 # Built with research from https://realpython.com/python-gui-tkinter/
 # https://realpython.com/python-csv/, https://www.census.gov/data/developers/data-sets/decennial-census.html
 # https://www.census.gov/data/datasets/time-series/demo/popest/2010s-state-total.html
 
 
-from os import read, stat
-from tkinter import mainloop, ttk
+from tkinter import ttk
 import tkinter as tk
 from tkinter.constants import FALSE, TRUE
-from typing import Text
 import pandas
 import sys, os
 
-
+# years from available data, 2010 tthrough 2019
 YEARS = []
 for date in range(2010, 2020):
     YEARS.append(date)
@@ -26,7 +25,8 @@ STATES = data_file.iloc[:,0]
 
 
 def validate_year(year_input):
-    '''Checks the input year to the list of census years'''
+    '''Checks the input year to the list of census years
+    Returns: Flase if not found, true otherwise'''
     if year_input:
         for year in YEARS:
             if int(year_input) == year:
@@ -34,7 +34,8 @@ def validate_year(year_input):
     return FALSE
 
 def validate_state(state_input):
-    '''Checks the input state abbreviation to the list of 50 states'''
+    '''Checks the input state abbreviation to the list of 50 states
+    Returns: Flase if not found, true otherwise'''
     for state in STATES:
         if state_input.upper() == state.upper():
             return TRUE
@@ -53,13 +54,14 @@ def get_year():
 
 # with research from https://realpython.com/python-csv/
 def read_input():
+    '''Reads in a csv file passed in as an arg
+    Returns: a data file tuple wiht year and state'''
     data_file = pandas.read_csv(sys.argv[1])
     return data_file["input_year"][0], data_file["input_state"][0]
 
 def display_results(input_received):
     '''Searches the data for the give state and year, then displayes the reult to screen and 
     send it to an output file'''
-
     # check for an input file
     if input_received:
         year, state = read_input()
@@ -84,6 +86,7 @@ def display_results(input_received):
     if not input_received:
         tree.insert("", "end", text="1", values=(year, state, data_file.loc[state][year]))
 
+    # send our new data to the output file
     df_output = pandas.DataFrame({"year": [year],"state": [state], 
                                 "output_population_size": [data_file.loc[state][year]]})
     # research from https://stackoverflow.com/questions/17530542/how-to-add-pandas-data-to-an-existing-csv-file
@@ -97,6 +100,7 @@ if __name__ == "__main__":
     if len(sys.argv) == 2:
         display_results(True)
 
+# tkinter section with research from https://realpython.com/python-gui-tkinter/
 # main window
 window = tk.Tk()
 window.resizable(width= 1, height= 1)
@@ -116,8 +120,9 @@ button = tk.Button(
     fg="white",
 )
 
-label_state = tk.Label(text="State:")
-label_year = tk.Label(text="Year:")
+# text field lables
+label_state = tk.Label(text="Full State Name:")
+label_year = tk.Label(text="Year 2010-2019:")
 
 # wiht research from https://www.askpython.com/python-modules/tkinter
 # and https://www.geeksforgeeks.org/python-tkinter-treeview-scrollbar/
