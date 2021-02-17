@@ -11,6 +11,7 @@ import tkinter as tk
 from tkinter.constants import FALSE, TRUE
 import pandas
 import sys, os
+from os import path
 
 # years from available data, 2010 tthrough 2019
 YEARS = []
@@ -90,8 +91,11 @@ def display_results(input_received):
     df_output = pandas.DataFrame({"year": [year],"state": [state], 
                                 "output_population_size": [data_file.loc[state][year]]})
     # research from https://stackoverflow.com/questions/17530542/how-to-add-pandas-data-to-an-existing-csv-file
-    # appends to current file since input file is overwritten when program is used
-    df_output.to_csv("output.csv", mode='a', index=False)
+    # creates output file if with headers if not found, or appends the results
+    if path.exists("output.csv"):
+            df_output.to_csv("output.csv", mode='a', index=False, header=False)
+    else:
+            df_output.to_csv("output.csv", mode='a', index=False)
 
     return
 
