@@ -11,7 +11,7 @@ import tkinter as tk
 from tkinter.constants import FALSE, TRUE
 from typing import Text
 import pandas
-import sys
+import sys, os
 
 
 YEARS = []
@@ -20,7 +20,8 @@ for date in range(2010, 2020):
 
 STATES = []
 # data from https://worldpopulationreview.com/states/state-abbreviations
-data_file = pandas.read_csv("/home/ragnaroekk/Documents/Courses/CS361/Population_Generator/nst-est2019-01.csv")    
+# help from https://www.tutorialspoint.com/How-to-open-a-file-in-the-same-directory-as-a-Python-script
+data_file = pandas.read_csv(os.path.join(sys.path[0],"nst-est2019-01.csv"))
 STATES = data_file.iloc[:,0]
 
 
@@ -79,13 +80,15 @@ def display_results(input_received):
     year = str(year)
 
     # reference https://kanoki.org/2019/04/12/pandas-how-to-get-a-cell-value-and-update-it/
-    data_file = pandas.read_csv("/home/ragnaroekk/Documents/Courses/CS361/Population_Generator/nst-est2019-01.csv",index_col=0)
+    data_file = pandas.read_csv(os.path.join(sys.path[0], "nst-est2019-01.csv"), index_col=0)
     if not input_received:
         tree.insert("", "end", text="1", values=(year, state, data_file.loc[state][year]))
 
     df_output = pandas.DataFrame({"year": [year],"state": [state], 
                                 "output_population_size": [data_file.loc[state][year]]})
-    df_output.to_csv("output.csv",index=False)
+    # research from https://stackoverflow.com/questions/17530542/how-to-add-pandas-data-to-an-existing-csv-file
+    # appends to current file since input file is overwritten when program is used
+    df_output.to_csv("output.csv", mode='a', index=False)
 
     return
 
