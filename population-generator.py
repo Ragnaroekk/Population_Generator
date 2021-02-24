@@ -80,10 +80,22 @@ def validate_inputs(state, year):
         return False
     return True
 
-def display_results(input_received):
-    '''Searches the data for the give state and year, then displayes the reult to screen and 
-    send it to an output file'''
+def output_results_to_csv(state, year, data_file):
+    '''Takes population data for the given state and year send it to an output file'''
 
+    # send our new data to the output file
+    df_output = pandas.DataFrame({"year": [year],"state": [state], 
+                                "output_population_size": [data_file.loc[state][year]]})
+    # research from https://stackoverflow.com/questions/17530542/how-to-add-pandas-data-to-an-existing-csv-file
+    # creates output file if with headers if not found, or appends the results
+    if path.exists("output.csv"):
+            df_output.to_csv("output.csv", mode='a', index=False, header=False)
+    else:
+            df_output.to_csv("output.csv", mode='a', index=False)
+    return
+
+def display_results(input_received):
+    '''Takes population data for the given state and displays it'''
     # from user input
     year, state = check_for_input(input_received)
     if not validate_inputs(state,year):
@@ -98,15 +110,8 @@ def display_results(input_received):
     if not input_received:
         tree.insert("", "end", text="1", values=(year, state, data_file.loc[state][year]))
 
-    # send our new data to the output file
-    df_output = pandas.DataFrame({"year": [year],"state": [state], 
-                                "output_population_size": [data_file.loc[state][year]]})
-    # research from https://stackoverflow.com/questions/17530542/how-to-add-pandas-data-to-an-existing-csv-file
-    # creates output file if with headers if not found, or appends the results
-    if path.exists("output.csv"):
-            df_output.to_csv("output.csv", mode='a', index=False, header=False)
-    else:
-            df_output.to_csv("output.csv", mode='a', index=False)
+    # send the results to file
+    output_results_to_csv(state, year, data_file)
 
     return
 
