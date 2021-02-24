@@ -62,7 +62,7 @@ def read_input():
 
 def check_for_input(input_received):
     '''Checks the system for passed in aruguments or text entry
-    Return: a tuple with the state then year'''
+    Returns: a tuple with the state then year'''
     # check for an input file
     if input_received:
         return read_input()
@@ -70,7 +70,8 @@ def check_for_input(input_received):
         return str(get_year()), str(get_state())
 
 def validate_inputs(state, year):
-    '''Prints error message to console if state or year is not found'''
+    '''Prints error message to console if state or year is not found
+    Returns: False if issues are found, True otherwise'''
         # check for valid inputs
     if not validate_state(state):
         print("State failue")
@@ -82,7 +83,6 @@ def validate_inputs(state, year):
 
 def output_results_to_csv(state, year, data_file):
     '''Takes population data for the given state and year send it to an output file'''
-
     # send our new data to the output file
     df_output = pandas.DataFrame({"year": [year],"state": [state], 
                                 "output_population_size": [data_file.loc[state][year]]})
