@@ -13,7 +13,7 @@ import pandas
 import sys, os
 from os import path
 
-# years from available data, 2010 tthrough 2019
+# years from available data, 2010 through 2019
 YEARS = []
 for date in range(2010, 2020):
     YEARS.append(date)
@@ -27,7 +27,7 @@ STATES = data_file.iloc[:,0]
 
 def validate_year(year_input):
     '''Checks the input year to the list of census years
-    Returns: Flase if not found, true otherwise'''
+    Returns: False if not found, true otherwise'''
     if year_input:
         for year in YEARS:
             if int(year_input) == year:
@@ -36,7 +36,7 @@ def validate_year(year_input):
 
 def validate_state(state_input):
     '''Checks the input state abbreviation to the list of 50 states
-    Returns: Flase if not found, true otherwise'''
+    Returns: False if not found, true otherwise'''
     for state in STATES:
         if state_input.upper() == state.upper():
             return TRUE
@@ -56,26 +56,37 @@ def get_year():
 # with research from https://realpython.com/python-csv/
 def read_input():
     '''Reads in a csv file passed in as an arg
-    Returns: a data file tuple wiht year and state'''
+    Returns: a data file tuple with year and state'''
     data_file = pandas.read_csv(sys.argv[1])
     return data_file["input_year"][0], data_file["input_state"][0]
+
+def check_for_input(input_received):
+    '''Checks the system for passed in aruguments or text entry
+    Return: a tuple with the state then year'''
+    # check for an input file
+    if input_received:
+        return read_input()
+    else:
+        return str(get_year()), str(get_state())
+
+def validate_inputs(state, year):
+    '''Prints error message to console if state or year is not found'''
+        # check for valid inputs
+    if not validate_state(state):
+        print("State failue")
+        return False
+    if not validate_year(year):
+        print("Year failue")
+        return False
+    return True
 
 def display_results(input_received):
     '''Searches the data for the give state and year, then displayes the reult to screen and 
     send it to an output file'''
-    # check for an input file
-    if input_received:
-        year, state = read_input()
-    else:
-        state = str(get_state())
-        year = str(get_year())
 
-    # check for valid inputs
-    if not validate_state(state):
-        print("State failue")
-        return
-    if not validate_year(year):
-        print("Year failue")
+    # from user input
+    year, state = check_for_input(input_received)
+    if not validate_inputs(state,year):
         return
     
     # account for capitalization errors and make sure we have strings
@@ -114,14 +125,24 @@ window.title("Population Generator")
 text_box_state = tk.Text(height=2, width=10)
 text_box_year = tk.Text(height=2, width=10)
 
-# submit button
-button = tk.Button(
+# primary button for search execution
+button_submit = tk.Button(
     text="Display Results!",
     command=lambda: display_results(False),
     width=10,
     height=5,
     bg="green",
     fg="white",
+)
+
+# secondary button for csv read and write
+button_communicate = tk.Button(
+    text="Communicate",
+    command=lambda: display_results(True),
+    width=10,
+    height=3,
+    bg="grey",
+    fg="black",
 )
 
 # text field lables
@@ -147,7 +168,8 @@ label_year.pack()
 text_box_year.pack()
 
 # add the button to the window
-button.pack()
+button_submit.pack()
+button_communicate.pack()
 
 # add the tree to the window
 tree.pack()
