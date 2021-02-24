@@ -35,7 +35,7 @@ def validate_year(year_input):
     return FALSE
 
 def validate_state(state_input):
-    '''Checks the input state abbreviation to the list of 50 states
+    '''Checks the input state's name to the list of 50 states
     Returns: False if not found, true otherwise'''
     for state in STATES:
         if state_input.upper() == state.upper():
@@ -86,7 +86,8 @@ def output_results_to_csv(state, year, data_file):
     # send our new data to the output file
     df_output = pandas.DataFrame({"year": [year],"state": [state], 
                                 "output_population_size": [data_file.loc[state][year]]})
-    # research from https://stackoverflow.com/questions/17530542/how-to-add-pandas-data-to-an-existing-csv-file
+    # research from:
+    # https://stackoverflow.com/questions/17530542/how-to-add-pandas-data-to-an-existing-csv-file
     # creates output file if with headers if not found, or appends the results
     if path.exists("output.csv"):
             df_output.to_csv("output.csv", mode='a', index=False, header=False)
@@ -115,7 +116,7 @@ def display_results(input_received):
 
     return
 
-# check if we got an input file and use those values
+# check if we received an input file and use those values
 if __name__ == "__main__":
     if len(sys.argv) == 2:
         display_results(True)
@@ -154,7 +155,7 @@ button_communicate = tk.Button(
 label_state = tk.Label(text="Full State Name:")
 label_year = tk.Label(text="Year 2010-2019:")
 
-# wiht research from https://www.askpython.com/python-modules/tkinter
+# with research from https://www.askpython.com/python-modules/tkinter
 # and https://www.geeksforgeeks.org/python-tkinter-treeview-scrollbar/
 tree = ttk.Treeview(window, selectmode="browse")
 tree["columns"] = ("1", "2", "3")
@@ -172,7 +173,7 @@ text_box_state.pack()
 label_year.pack()
 text_box_year.pack()
 
-# add the button to the window
+# add the buttons to the window
 button_submit.pack()
 button_communicate.pack()
 
