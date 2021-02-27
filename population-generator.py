@@ -85,7 +85,7 @@ def output_results_to_csv(state, year, data_file):
     '''Takes population data for the given state and year send it to an output file'''
     # send our new data to the output file
     df_output = pandas.DataFrame({"year": [year],"state": [state], 
-                                "output_population_size": [data_file.loc[state][year]]})
+                                "output_population_size": [data_file.loc[state][year]], "output_content": ""})
     # research from:
     # https://stackoverflow.com/questions/17530542/how-to-add-pandas-data-to-an-existing-csv-file
     # creates output file if with headers if not found, or appends the results
@@ -116,6 +116,40 @@ def display_results(input_received):
 
     return
 
+def keep_count(function):
+    '''Wrapper to track how many times a function is called'''
+    #https://realpython.com/primer-on-python-decorators/
+    def wrapper():
+        wrapper.called += 1
+        return function()
+    wrapper.called = 0
+    return wrapper
+
+@keep_count
+def append_results():
+    '''Takes the external data and appends it to the output file'''
+    # research from 
+    # https://www.kite.com/python/answers/how-to-add-a-column-to-a-csv-file-in-python
+    try:
+        input_file = pandas.read_csv(os.path.join(sys.path[0], "output" + str(append_results.called) + ".csv"))
+
+        data_from_content_generator = input_file.iloc[0,2]
+        
+        output_file = pandas.read_csv(os.path.join(sys.path[0], "output.csv"))
+
+        output_file.iloc[append_results.called - 1, 3] = data_from_content_generator
+        
+        output_file.to_csv("output.csv", index=False)
+    except:
+        print("Issue Reading File")
+        append_results.called -= 1
+
+    return
+
+
+
+
+
 # check if we received an input file and use those values
 if __name__ == "__main__":
     if len(sys.argv) == 2:
@@ -144,7 +178,7 @@ button_submit = tk.Button(
 # secondary button for csv read and write
 button_communicate = tk.Button(
     text="Communicate",
-    command=lambda: display_results(True),
+    command=lambda: append_results(),
     width=10,
     height=3,
     bg="grey",
