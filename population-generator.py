@@ -53,6 +53,12 @@ def get_year():
     input = text_box_year.get("1.0", "end-1c")
     return input
 
+def get_data_file(csv_file):
+    '''A method to read a local csv file into a pandas data file
+    Returns: a Pandas data file'''
+    data_file = pandas.read_csv(os.path.join(sys.path[0], str(csv_file)), index_col=0)
+    return data_file
+
 # with research from https://realpython.com/python-csv/
 def read_input():
     '''Reads in a csv file passed in as an arg
@@ -70,9 +76,8 @@ def check_for_input(input_received):
         return str(get_year()), str(get_state())
 
 def validate_inputs(state, year):
-    '''Prints error message to console if state or year is not found
+    '''Checks for valid inputs, prints error message if state or year is not found
     Returns: False if issues are found, True otherwise'''
-        # check for valid inputs
     if not validate_state(state):
         print("State failue")
         return False
@@ -97,7 +102,7 @@ def output_results_to_csv(state, year, data_file):
 
 def display_results(input_received):
     '''Takes population data for the given state and displays it'''
-    # from user input
+    # taken in from user input
     year, state = check_for_input(input_received)
     if not validate_inputs(state,year):
         return
@@ -107,11 +112,10 @@ def display_results(input_received):
     year = str(year)
 
     # reference https://kanoki.org/2019/04/12/pandas-how-to-get-a-cell-value-and-update-it/
-    data_file = pandas.read_csv(os.path.join(sys.path[0], "nst-est2019-01.csv"), index_col=0)
+    data_file = get_data_file("nst-est2019-01.csv")
     if not input_received:
         tree.insert("", "end", text="1", values=(year, state, data_file.loc[state][year]))
 
-    # send the results to file
     output_results_to_csv(state, year, data_file)
 
     return
@@ -131,11 +135,11 @@ def append_results():
     # research from 
     # https://www.kite.com/python/answers/how-to-add-a-column-to-a-csv-file-in-python
     try:
-        input_file = pandas.read_csv(os.path.join(sys.path[0], "output" + str(append_results.called) + ".csv"))
+        input_file = get_data_file("output" + str(append_results.called) + ".csv")
 
         data_from_content_generator = input_file.iloc[0,2]
         
-        output_file = pandas.read_csv(os.path.join(sys.path[0], "output.csv"))
+        output_file = get_data_file("output.csv")
 
         output_file.iloc[append_results.called - 1, 3] = data_from_content_generator
         
@@ -145,10 +149,6 @@ def append_results():
         append_results.called -= 1
 
     return
-
-
-
-
 
 # check if we received an input file and use those values
 if __name__ == "__main__":
