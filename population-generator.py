@@ -137,13 +137,13 @@ def append_results():
     try:
         input_file = get_data_file("output" + str(append_results.called) + ".csv")
 
-        data_from_content_generator = input_file.iloc[0,2]
-        
+        data_from_content_generator = input_file.iloc[0,1]
+
         output_file = get_data_file("output.csv")
 
-        output_file.iloc[append_results.called - 1, 3] = data_from_content_generator
+        output_file.iloc[append_results.called - 1, 2] = data_from_content_generator
         
-        output_file.to_csv("output.csv", index=False)
+        output_file.to_csv("output.csv")
     except:
         print("Issue Reading File")
         append_results.called -= 1
