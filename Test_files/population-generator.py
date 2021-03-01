@@ -141,18 +141,13 @@ def GUI():
         # https://www.kite.com/python/answers/how-to-add-a-column-to-a-csv-file-in-python
         try:
             input_file = get_data_file("output" + str(append_results.called) + ".csv")
-
             data_from_content_generator = input_file.iloc[0, 1]
-
             output_file = get_data_file("output.csv")
-
             output_file.iloc[append_results.called - 1, 2] = data_from_content_generator
-
             output_file.to_csv("output.csv")
         except:
             text_box_socket.insert("end","Issue Reading File")
             append_results.called -= 1
-
         return
 
     def check_key_entry(key):
@@ -163,10 +158,9 @@ def GUI():
         else:
             return False
 
-
     def request_content():
-        '''Sends a request to the Content Generator wiht primary and secondary key as entered by user
-        Returns: None
+        '''Sends a request to the Content Generator with primary and secondary key as entered by user
+        Returns: None, but will display the response data from the content generator
         '''
         # research from https://stackoverflow.com/questions/42473873/
         primary_key = text_box_primary.get()
@@ -190,9 +184,10 @@ def GUI():
             data=data.decode()
             text_box_socket.insert("end", "Content generated: " + data + ".\n")
         except Exception as error:
+            text_box_socket.delete(1.0, tk.END)
             text_box_socket.insert("end", str(error) + '\n')
 
-    # check if we received an input file and use those values
+    # process optional input.csv file
     if len(sys.argv) == 2:
         display_results(True)
 
@@ -224,7 +219,7 @@ def GUI():
     button_communicate = tk.Button(
         text="Communicate with CSV",
         command=lambda: append_results(),
-        width=10,
+        width=20,
         height=3,
         bg="grey",
         fg="black",
