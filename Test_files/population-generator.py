@@ -6,7 +6,7 @@
 # https://www.census.gov/data/datasets/time-series/demo/popest/2010s-state-total.html
 
 
-from tkinter import ttk,Entry
+from tkinter import ttk
 import tkinter as tk
 from tkinter.constants import FALSE, TRUE
 import pandas
@@ -28,38 +28,7 @@ data_file = pandas.read_csv(os.path.join(sys.path[0],"nst-est2019-01.csv"))
 STATES = data_file.iloc[:,0]
 
 
-def get_population_size(state,year):
-    '''Finds the population size of a state and year
-    Returns: the population as a string'''
-    data = pandas.read_csv("nst-est2019-01.csv",index_col=0)
-    state = state.capitalize()
-    if state not in data.index:
-        return "State failure"
-    if year not in data.columns:
-        return "Year failure"
-    return str(data.loc[state,year])
-
-def communication_server():
-    '''
-    Receives new state and year requests and sends back the population
-    Returns: none
-    '''
-    # help from https://pythonprogramming.net/sockets-tutorial-python-3/
-    server = socket.socket()
-    server.bind(("localhost", 9999))
-    server.listen()
-
-    while True:
-        conn, addr = server.accept()
-        print("New connection:", addr)
-        data = conn.recv(1024)
-        data=data.decode()
-        print("Received data:", data)
-        population=get_population_size(data.split(',')[0],data.split(',')[1])
-        print(population)
-        conn.send(population.encode())
-
-# check if we received an input file and use those values
+# separated out GUI from server
 def GUI():
     def validate_year(year_input):
         '''Checks the input year to the list of census years
@@ -196,7 +165,8 @@ def GUI():
 
 
     def request_content():
-        '''
+        '''Sends a request to the Content Generator wiht primary and secondary key as entered by user
+        Returns: None
         '''
         # research from https://stackoverflow.com/questions/42473873/
         primary_key = text_box_primary.get()
@@ -205,19 +175,24 @@ def GUI():
         if not check_key_entry(primary_key):
             text_box_socket.insert("end", "Missing primary or secondary text entry")
             return 
+
+        # research from https://wiki.python.org/moin/HandlingExceptions
+        # https://stackoverflow.com/questions/27966626/how-to-clear-delete-the-contents-of-a-tkinter-text-widget
+        # and https://realpython.com/python-sockets/
         try:
             text_box_socket.delete(1.0, tk.END)
             client = socket.socket()
             client.connect(("localhost", 8000))
-            message = primary_key + ',' + secondary_key
-            text_box_socket.insert("end", "Population Generator is requesting data...\n\n")
+            message = primary_key + ',' + secondary_key  # format requested by content generator
+            text_box_socket.insert("end", "Population Generator is requesting data...\n")
             client.send(message.encode())
-            data = client.recv(1024)  # data is a binary string
+            data = client.recv(1024)
             data=data.decode()
-            text_box_socket.insert("end", "The content is: " + data + ".\n")
+            text_box_socket.insert("end", "Content generated: " + data + ".\n")
         except Exception as error:
             text_box_socket.insert("end", str(error) + '\n')
 
+    # check if we received an input file and use those values
     if len(sys.argv) == 2:
         display_results(True)
 
@@ -307,8 +282,41 @@ def GUI():
     # mainloop as required for tkinter
     window.mainloop()
 
+def get_population_size(state,year):
+    '''Finds the population size of a state and year
+    Returns: the population as a string'''
+    data = pandas.read_csv("nst-est2019-01.csv",index_col=0)
+    state = state.capitalize()
+    if state not in data.index:
+        return "State failure"
+    if year not in data.columns:
+        return "Year failure"
+    return str(data.loc[state,year])
+
+def communication_server():
+    '''
+    Receives new state and year requests and sends back the population
+    Returns: none
+    '''
+    # help from https://pythonprogramming.net/sockets-tutorial-python-3/
+    server = socket.socket()
+    server.bind(("localhost", 9999))
+    server.listen()
+
+    while True:
+        conn, addr = server.accept()
+        print("New connection:", addr)
+        data = conn.recv(1024)
+        data=data.decode()
+        print("Received data:", data)
+        population=get_population_size(data.split(',')[0],data.split(',')[1])
+        print(population)
+        conn.send(population.encode())
+
 # modeled after Zekun Chen's layout
 if __name__=="__main__":
+
+
     gui_process = Process(target = GUI)
     server_process = Process(target = communication_server)
     gui_process.start()
