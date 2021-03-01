@@ -19,7 +19,17 @@ The program will send the results of the input file to an output.csv file,
 it will also output this file when executing the search and append the results.
 
 To communicate:
-create the output.csv file by selecting a valid state and year combo then display the results. 
+Option 1 with server/socket connection:
+Start the program with 
+$ python3 population-generator.py
+
+Then also start the Content_Generator.py file from Zekun Chen.
+
+Once both are running, enter data into the primary and secondary key fields then click 
+"Request data from Content Generator". It will then show the results in the main text box.
+
+Option 2 with CSV files:
+Create the output.csv file by selecting a valid state and year combo then display the results. 
 Once the output file is creatd, the content_generator can search it then produce the output1.csv.
 Then click the communicate button to pull in the new data and append it to output.csv.
 This should continue to work in order as you create more state year combos, you can append more

@@ -28,7 +28,7 @@ data_file = pandas.read_csv(os.path.join(sys.path[0],"nst-est2019-01.csv"))
 STATES = data_file.iloc[:,0]
 
 
-# separated out GUI from server
+# GUI separate from server
 def GUI():
     def validate_year(year_input):
         '''Checks the input year to the list of census years
@@ -120,9 +120,7 @@ def GUI():
         data_file = get_data_file("nst-est2019-01.csv")
         if not input_received:
             tree.insert("", "end", text="1", values=(year, state, data_file.loc[state][year]))
-
         output_results_to_csv(state, year, data_file)
-
         return
 
     def keep_count(function):
@@ -181,7 +179,7 @@ def GUI():
             text_box_socket.insert("end", "Population Generator is requesting data...\n")
             client.send(message.encode())
             data = client.recv(1024)
-            data=data.decode()
+            data = data.decode()
             text_box_socket.insert("end", "Content generated: " + data + ".\n")
         except Exception as error:
             text_box_socket.delete(1.0, tk.END)
@@ -310,8 +308,6 @@ def communication_server():
 
 # modeled after Zekun Chen's layout
 if __name__=="__main__":
-
-
     gui_process = Process(target = GUI)
     server_process = Process(target = communication_server)
     gui_process.start()
