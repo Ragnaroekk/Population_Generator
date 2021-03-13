@@ -6,7 +6,7 @@
 # https://www.census.gov/data/datasets/time-series/demo/popest/2010s-state-total.html
 
 
-from tkinter import ttk
+from tkinter import Entry, ttk
 import tkinter as tk
 from tkinter.constants import FALSE, TRUE
 import pandas
@@ -156,6 +156,12 @@ def GUI():
         else:
             return False
 
+    def clear_entries():
+        '''Loops through GUI entries and clears them'''
+        # research from https://stackoverflow.com/questions/8751434/looping-over-widgets-in-tkinter
+        for entry_field in filter(lambda w:isinstance(w,Entry), window.children.values()):
+            entry_field.delete(0, 'end')
+
     def request_content():
         '''Sends a request to the Content Generator with primary and secondary key as entered by user
         Returns: None, but will display the response data from the content generator
@@ -233,7 +239,17 @@ def GUI():
         fg="black",
     )
 
-    # text field lables
+    # button for clearing fields
+    button_clear = tk.Button(
+        text="Clear entries",
+        command=clear_entries,
+        width=30,
+        height=2,
+        bg="red",
+        fg="white",
+    )
+
+    # text field labels
     label_state = tk.Label(text="Full State Name:")
     label_year = tk.Label(text="Year 2010-2019:")
     label_socket = tk.Label(text="Communication Information:")
@@ -268,6 +284,7 @@ def GUI():
     button_submit.pack()
     button_communicate.pack()
     button_request.pack()
+    button_clear.pack()
 
     # add the tree to the window
     tree.pack()
@@ -313,3 +330,4 @@ if __name__=="__main__":
     gui_process.start()
     server_process.start()
     gui_process.join()
+    server_process.terminate()
