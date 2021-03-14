@@ -47,7 +47,8 @@ def GUI():
                 return TRUE
         return FALSE
 
-    # with research from https://stackoverflow.com/questions/14824163/how-to-get-the-input-from-the-tkinter-text-widget
+    # with research from 
+    # https://stackoverflow.com/questions/14824163/how-to-get-the-input-from-the-tkinter-text-widget
     def get_state():
         '''Returns the state text entered by the user'''
         input = text_box_state.get()
@@ -95,7 +96,8 @@ def GUI():
         '''Takes population data for the given state and year send it to an output file'''
         # send our new data to the output file
         df_output = pandas.DataFrame({"year": [year], "state": [state],
-                                      "output_population_size": [data_file.loc[state][year]], "output_content": ""})
+                                      "output_population_size": [data_file.loc[state][year]], 
+                                      "output_content": ""})
         # research from:
         # https://stackoverflow.com/questions/17530542/how-to-add-pandas-data-to-an-existing-csv-file
         # creates output file if with headers if not found, or appends the results
@@ -306,7 +308,6 @@ def get_population_size(state,year):
 def communication_server():
     '''
     Receives new state and year requests and sends back the population
-    Returns: none
     '''
     # help from https://pythonprogramming.net/sockets-tutorial-python-3/
     server = socket.socket()
