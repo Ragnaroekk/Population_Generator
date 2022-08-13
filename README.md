@@ -7,13 +7,14 @@ the population count for that combination.
 
 To run:
 
-$ python3 population-generator.py
+```$ python3 population-generator.py```
 
 Optional arugment:
-$ python3 population-generator.py input.csv
+
+```$ python3 population-generator.py input.csv```
+
 Note: input.csv takes the format year then state, i.e.
-input_year,input_state
-2010,Alabama
+input_year,input_state 2010,Alabama
 
 The program will send the results of the input file to an output.csv file,
 it will also output this file when executing the search and append the results.
@@ -21,7 +22,8 @@ it will also output this file when executing the search and append the results.
 To communicate:
 Option 1 with server/socket connection:
 Start the program with 
-$ python3 population-generator.py
+
+```$ python3 population-generator.py```
 
 Then also start the Content_Generator.py file from Zekun Chen.
 
